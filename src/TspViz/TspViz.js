@@ -19,8 +19,8 @@ export default class TspViz extends Component {
 
     componentDidMount() {
         const nodes = [];
-        const numRows = 20;
-        const numCols = 50;
+        const numRows = 75;
+        const numCols = 100;
         for (let row=0; row<numRows; row++) {
             const currentRow = [];
             for (let col=0; col<numCols; col++) {
@@ -36,7 +36,6 @@ export default class TspViz extends Component {
             nodes.push(currentRow);
         }
         this.setState({nodes})
-        console.log("hello")
     }
 
     arraysEqual = (a, b) => {
@@ -57,8 +56,8 @@ export default class TspViz extends Component {
 
     clearNodes = () => {
         const nodes = [];
-        const numRows = 20;
-        const numCols = 50;
+        const numRows = 75;
+        const numCols = 100;
         for (let row=0; row<numRows; row++) {
             const currentRow = [];
             for (let col=0; col<numCols; col++) {
@@ -89,25 +88,18 @@ export default class TspViz extends Component {
             return;
         }
         const paths = travelingSalesperson(this.state.pins);
-        let wait = 0;
         for (let i = 0; i < paths.length; i++) {
-            setTimeout(
-                () => {this.animatePath(paths[i]);}, 
-                (wait));
-            wait += paths[i].length*50;
+            this.animatePath(paths[i]); 
         }
     }
 
     animatePath = (path) => {
         for (let i = 0; i < path.length; i++) {
-            setTimeout(
-                () => {this.travel(path[i][0], path[i][1]);} 
-            , 50 * i); 
+            this.travel(path[i][0], path[i][1]); 
         }
     }
 
     travel = (row, col) => { 
-        console.log(row, col);
         const newNode = {
             col,
             row,
@@ -152,7 +144,6 @@ export default class TspViz extends Component {
 
     render() {
         const nodes = this.state.nodes;
-        console.log("rendering")
 
         return (
             <div className="grid">
