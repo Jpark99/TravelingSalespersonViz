@@ -5,10 +5,14 @@
   display: inline-block;
 }
 
-.node-finish {
+.node-start {
   background-color: red;
 }
 
-.node-start {
-  background-color: green;
+.node-pinned {
+  background-color: dodgerblue;
+}
+
+.node-visited {
+  background-color: gold;
 }
