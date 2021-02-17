@@ -51,28 +51,87 @@ function diagnoalPath(startRow, startCol, DestRow, DestCol, lastPath) {
     path.push([row, col]);
     diagDif -= 1;
   }
+
   return path;
 }
 
-export function travelingSalesperson(pins) {
-  let paths = [];
-  let start = pins[0]
-  let dest = pins[1];
-  let startIndx = 0;
-  let destIndx = 1;
-  do {
-    let currentPath = findPath(start[0], start[1], dest[0], dest[1]);
-    paths.push(currentPath);
-    startIndx ++;
-    destIndx ++;
-    if (destIndx >= pins.length) {
-      destIndx = 0;
+function distanceMatrix(pins) {
+  let disMatrix = [];
+  for (let i = 0; i < pins.length; i++) {
+    let dis = [];
+    for (let j = 0; j < pins.length; j++) {
+      dis.push(0);
     }
-    start = pins[startIndx];
-    dest = pins[destIndx];
+    disMatrix.push(dis);
   }
-  while (startIndx < pins.length);
+  let start = 0;
+  let end = 1;
+  while (start < pins.length-1) {
+    while(end < pins.length) {
+      let path = findPath(pins[start][0], pins[start][1], pins[end][0], pins[end][1]);
+      disMatrix[start][end] = path.length;
+      disMatrix[end][start] = path.length;
+      end++;
+    }
+    start++;
+    end = start+1;
+  }
+  return disMatrix;
+}
 
-  return paths;
+function indexOfSmallest(a) {
+  var lowest = 0;
+  for (var i = 1; i < a.length; i++) {
+   if (a[i] < a[lowest]) lowest = i;
+  }
+  return [a[lowest],lowest];
+ }
+
+function findMin(M, S, start) {
+  if (S.length === 1) {
+    return [ M[0][S[0]], [S[0]] ];
+  }
+  else {
+    let candidates = [];
+    let pathOps = [];
+    for (let k = 0; k < S.length; k++) {
+      let new_S = [];
+      if (k === S.length-1) {
+        new_S = S.slice(0, k);
+      }
+      else {
+        new_S = S.slice(0, k).concat(S.slice(k-S.length+1));
+      }
+      let minPath = findMin(M, new_S, S[k]);
+      candidates.push(M[start][S[k]] + minPath[0]);
+      pathOps.push(minPath[1]);
+    }
+    const result = indexOfSmallest(candidates);
+    let resultPath = pathOps[result[1]]
+    resultPath.unshift(S[result[1]]);
+    return [result[0], resultPath];
+  }
+}
+
+export function travelingSalesperson(pins) {
+  let dist = distanceMatrix(pins);
+  let S = [];
+  for (let i = 1; i < pins.length; i++) {
+    S.push(i)
+  }
+  let path = findMin(dist, S, 0)[1];
+  path.unshift(0);
+  let coordinates = [];
+  console.log(path);
+  for (let j = 0; j < path.length; j++) {
+    let start = path[j];
+    let finish = path[j+1];
+    if (j+1 === path.length) {
+      finish = 0;
+    }
+    let currentPath = findPath(pins[start][0], pins[start][1], pins[finish][0],pins[finish][1]);
+    coordinates.push(currentPath);
+  }
+  return coordinates;
 }
     

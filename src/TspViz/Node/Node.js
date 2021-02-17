@@ -10,14 +10,14 @@ export default class Node extends Component {
     }
 
     render() {
-        const {isStart, pinned, visited} = this.props;
+        const {isStart, pinned, visited, idNum} = this.props;
         const extraClassName = 
             isStart ? 'node-start'
             : pinned ? 'node-pinned'
             : visited ? 'node-visited'
             : '';
 
-        return <div className={`node ${extraClassName}`} onClick={this.props.customClickEvent}></div>
+        return <div className={`node ${extraClassName}`} onClick={this.props.customClickEvent}>{idNum}</div>
     }
 }
 

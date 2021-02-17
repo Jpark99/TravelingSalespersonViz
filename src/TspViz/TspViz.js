@@ -30,11 +30,12 @@ export default class TspViz extends Component {
                     isStart: false,
                     pinned: false,
                     visited: false,
+                    idNum: this.state.numPinned-1,
                 };
                 currentRow.push(currentNode);
             }
             nodes.push(currentRow);
-        }
+        } 
         this.setState({nodes})
     }
 
@@ -42,11 +43,6 @@ export default class TspViz extends Component {
         if (a === b) return true;
         if (a == null || b == null) return false;
         if (a.length !== b.length) return false;
-      
-        // If you don't care about the order of the elements inside
-        // the array, you should sort both arrays here.
-        // Please note that calling sort on an array will modify that array.
-        // you might want to clone your array first.
       
         for (var i = 0; i < a.length; ++i) {
           if (a[i] !== b[i]) return false;
@@ -67,6 +63,7 @@ export default class TspViz extends Component {
                     isStart: false,
                     pinned: false,
                     visited: false,
+                    idNum: this.state.numPinned-1,
                 };
                 currentRow.push(currentNode);
             }
@@ -82,20 +79,29 @@ export default class TspViz extends Component {
         })
     }
 
+    calculateWait = (l) => {
+        let i = l-1;
+        let final = 0;
+        while (i > 0) {
+            final += (i*10);
+            i--;
+        }
+        return final;
+    }
+
     simulate = () => {
         if (this.state.clicked === false || this.state.numPinned < 2) {
             alert("You need to select at least two nodes!")
             return;
         }
         const paths = travelingSalesperson(this.state.pins);
-        for (let i = 0; i < paths.length; i++) {
-            this.animatePath(paths[i]); 
-        }
+        this.animatePath(paths.flat());
     }
 
     animatePath = (path) => {
         for (let i = 0; i < path.length; i++) {
-            this.travel(path[i][0], path[i][1]); 
+            setTimeout(() => {
+            this.travel(path[i][0], path[i][1]);}, 10*i);
         }
     }
 
@@ -106,6 +112,7 @@ export default class TspViz extends Component {
             isStart: this.state.nodes[row][col].isStart,
             pinned: this.state.nodes[row][col].pinned,
             visited: true,
+            idNum: this.state.numPinned-1,
         };
 
         const newNodes = this.state.nodes.slice();
@@ -124,6 +131,7 @@ export default class TspViz extends Component {
             isStart: start,
             pinned: !this.state.nodes[row][col].pinned,
             visited: false,
+            idNum: this.state.numPinned-1,
         };
 
         const newNumPinned = newNode.pinned ? this.state.numPinned+1 : this.state.numPinned-1;
